@@ -1,0 +1,122 @@
+JMS Message
+
+	Có 2 hình tin nhắn là P2P(Point to Point) Và Pub/Sub(Publisher Và Subscriber).
+
+	JMS(Java Message Service) API là một phần đặc tả kỹ thuật java Enterprice Edition(Java EE), 
+	là một API trung gian thông báo Java(MOM) để gửi tin nhắn giữa 2 hay nhiều client.
+
+	JMS mô tả các phương thức tạo bởi chương trình java cho việc: Create, Send, Receive, Read message.
+
+	JMS cho phép giao tiếp giữa các thành phần khác nhau của một ứng dụng phân tán được 
+	kết nối lõng lẽo, đáng tin cậy và hỗ trợ bất đồng bộ.
+
+	Giao tiếp giữa các client được tạo ra bởi message broker qua các tiêu chuẩn 
+	truyền tin bất đồng bộ như AMQP, MTQP.
+
+	JMS API triển khai để xử lý vấn đề nhà sản xuất và người tiêu dùng: https://bit.ly/3wU1zmY
+
+	JMS bao gồm 2 thành phần:
+		API: hỗ trợ chức năng cho nhà phát triển phần mềm
+		SPI(Service Provider Interface): cho phép các provider tạo ra tool tích hợp,
+		định hướng cho mọi người sử dụng theo hướng chuẩn hóa
+MOM là gì?
+	Message-oriented middleware hay MQ–Message Queue là ứng dụng trung gian hỗ trợ 
+	gửi và nhận tin nhắn trong ứng dụng phân tán.
+	
+	Cơ chế MOM tương tự như	database với việc gửi và nhận tin nhắn, đảm bảo toàn vẹn dữ liệu, 
+	transaction, cân bằng việc gửi và nhận.
+	
+	Nơi lưu trữ dữ liệu và tương tác với MOM gọi là Destination.
+	
+	MOM tiêu biểu:
+
+JMS Broker ( Nhà môi giới ) 
+	Để gửi hoặc nhận tin nhắn, trước tiên JMS Client phải kết nối với JMS Message server
+	
+	-	Một Connection mở ra một liên lạc giữa client và broker
+	-	Tiếp theo tạo client phải thiết lập một session để tạo và đọc tin nhắn. 
+		bản thân client là producer hoặc consumer
+		bản thân client là producer hoặc consumer
+	-	Transaction được tạo bởi client là transaction giữa producer và broker hoặc giữa broker và consumer,
+		không bao giờ giữa producer và consumer.
+	-	Producer gửi tin nhắn đến destination (đích) mà broker quản lý. 
+		Consumer truy cập vào destination để lấy tin nhắn.
+	-	Tin nhắn bao gồm header (tiêu đề), optional properties (thuộc tính), và body (nội dung). 
+		Body chứa dữ liệu, header chứa thông tin broker cần định tuyến và quản lý tin nhắn 
+		và các thuộc tính có thể được xác định bởi các ứng dụng client hoặc bởi provider 
+		để phục vụ nhu cầu của chính họ trong việc xử lý tin nhắn.
+	-	Connection, Session, Destination, Message, Producer và Consumer là những đối tượng cơ bản 
+		tạo nên một ứng dụng JMS.
+Các thành phần của JMS
+	-	JMS Provider:
+		+	JMS API là một tập hợp các interface, không chứa bất kỳ implementation nào. 
+			JMS Provider là một hệ thống bên thứ ba, chịu trách nhiệm implement JMS API 
+			để cung cấp các tính năng nhắn tin cho khách hàng.
+		+	JMS Provider còn được gọi là phần mềm MOM. JMS Provider cũng cung cấp một số
+			thành phần UI để quản trị và kiểm soát phần mềm MOM này.
+		+	JMS Provider được viết trên chuẩn Java do đó sẽ chạy được trên đa nền tảng.
+	-	JMS Client:  Là các chương trình độc lập hoặc các components (thành phần) của ứng dụng, 
+		được viết bằng Java có khả năng trao đổi message.
+		+	JMS producer/ publisher : là JMS client tạo và gửi tin nhắn.
+		+	JMS consumer/ subscriber : là JMS client nhận tin nhắn.
+	-	JMS Message:  Là các object, định dạng trung gian chứa data để giao tiếp giữa JMS Client và Provider.
+	-	Administered object : hỗ trợ cơ chế quản lý và cấu hình cho JMS Object. Bao gồm:
+		+	ConnectionFactory Object: được sử dụng để tạo kết nối giữa ứng dụng Java và JMS Provider. 
+			Tương tự như khái niệm truy cập DataSource của kết nối dữ liệu.
+		+	Destination Object: là nơi lưu trữ cho message, 
+			là đối tượng JMS được JMS Client sử dụng để chỉ định đích của tin nhắn 
+			mà nó đang gửi và nguồn tin nhắn mà nó nhận được. Có hai loại Destination: Queue and Topic.
+		+	JMS Queue : Khu vực chứa các tin nhắn đã được gửi và đang chờ để đọc (chỉ bởi một consumer). 
+			Hàng đợi này đảm bảo các tin nhắn được nhận theo thứ tự gửi và mỗi tin nhắn chỉ được xử lý một lần.
+		+	JMS Topic : Một cơ chế phân phối để publisher gửi tin nhắn đến nhiều người đăng ký (subscriber).
+
+Cơ chế giao tiếp JMS:
+	-	Asynchronous: JMS tự động chuyển message đến người nhận khi message đến.
+	-	Reliable: Một message chỉ được chuyển đến đúng một người nhận mà không có cơ chế nhân bản, do vậy, tín hiệu 
+			phản hồi hoàn tất nhận message từ người nhận sẽ gây nên xóa bỏ thông tin trên middleware object.
+
+Mô hình JMS
+	-	P2P(Point To Point)
+		+ có 3 thành phần chính: Sender(ứng dụng gửi), Queue(nơi lưu trữ), Receiver(ứng dụng nhận).
+	-	Pub/Sub(Publisher/Subcriber)
+		+ Có 3 thành phần chính: Sender, Topic(nơi lưu trữ), Receiver.
+Ưu điểm JSM (RAISE LF) 
+	-	Reliability (Độ tin cậy)
+	-	Asynchronous(Bất đồng bộ): có thể gửi và nhận message không đồng bộ. Sender và Receiver không cần chờ nhau.
+	-	Interoperability(Khả năng tương tác): tương tác với các nền tảng java khác như Scala, Groovy
+	-	Scalability(Khả năng mở rộng): Hệ thống nhắn tin giúp quảng bá tin nhắn đến nhiều receiver, giúp mở rộng.
+	-	Ease of integration(Dễ tích hợp): có thể viết bằng nhiều ngôn ngữ khác nhau và chạy trên máy chủ khác nhau.
+	-	Loosely coupled(Kết nối lỏng lẻo): 
+	-	Flexibility (Tính linh hoạt):
+Nhược điểm	
+	-	Load Balancing/Fault Tolerance
+	-	Error/Advisory Notification
+	-	Administration
+	-	Security
+	-	Wire Protocol
+	-	Message Type Repository
+JMS VS Socket
+	-	Ưu điểm của JMS:
+	
+		+	Người gửi và người nhận không cần biết nhau.
+		+	Có thể dễ dàng đăng ký và hủy đăng ký
+		+	Hữu ích cho việc lưu trữ thông tin offline và cập nhật số lượng lớn. Vì vậy, người nhận có thể xử lý từng cái một.
+		+	Người gửi / người nhận có thể làm việc bất đồng bộ.
+	-	Ưu điểm Socket:
+
+		+	Socket cung cấp một kết nối trực tiếp.
+		+	Độ trễ thấp, vì không có máy chủ ở giữa (không có MoM)
+		+	Socket hoạt động ở lớp TCP để truyền dữ liệu ít hơn.
+Trường hợp sử dụng JMS
+	-	Mong muốn các thành phần không phụ thuộc vào thông tin về 
+		interface của các thành phần khác, vì vậy các thành phần có thể dễ dàng thay thế.
+	-	Muốn ứng dụng chạy cho dù tất cả các thành phần có hoạt động hay không.
+	-	Ứng dụng cho phép một thành phần gửi thông tin cho người khác và tiếp tục hoạt động 
+		mà không cần chờ nhận được phản hồi ngay lập tức.
+AMQP(Advanced Message Queuing Protocol): Giao thức xếp hàng tin nhắn nâng cao
+	-	AMQP là một giao thức nhắn tin, không triển khai JMS API
+	-	JMS là API và AMQP là một giao thức. Vì vậy, không có nghĩa gì khi nói rằng giao thức mặc định của JMS là gì, 
+		tất nhiên các ứng dụng client sử dụng HTTP/ HTTPS làm giao thức kết nối khi gọi Web Service
+	-	JMS chỉ là một đặc tả API. Nó không sử dụng bất kỳ giao thức nào. 
+		JMS Provider như ActiveMQ có thể đang sử dụng bất kỳ giao thức cơ bản nào để làm 
+		JMS Transport cho JMS API, chẳng hạn: AMQP, MQTT, OpenWire, REST (HTTP), RSS và Atom, Stomp, …
